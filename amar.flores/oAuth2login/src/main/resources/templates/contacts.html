@@ -1,21 +1,736 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
-    <title>Google Contacts</title>
+    <title>Contact Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <style>
+        * {
+       margin: 0;
+       padding: 0;
+       box-sizing: border-box;
+   }
+
+   body {
+       font-family: 'Poppins', sans-serif;
+       background: #1a202c; /* Dark background */
+       color: #e2e8f0; /* Light text */
+       min-height: 100vh;
+       padding: 2rem;
+       display: flex;
+       justify-content: center;
+       align-items: center;
+   }
+
+   .container {
+       max-width: 1200px;
+       margin: 0 auto;
+   }
+
+   .header {
+       background: #2d3748; /* Dark gray */
+       padding: 1.5rem;
+       border-radius: 15px;
+       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+       margin-bottom: 2rem;
+       display: flex;
+       justify-content: space-between;
+       align-items: center;
+   }
+
+   .header h1 {
+       color: #e2e8f0; /* Light text */
+       font-size: 2rem;
+   }
+
+   .nav-buttons {
+       display: flex;
+       gap: 1rem;
+   }
+
+   .btn {
+       padding: 0.75rem 1.5rem;
+       border-radius: 8px;
+       border: none;
+       cursor: pointer;
+       font-weight: 600;
+       transition: all 0.3s ease;
+       text-decoration: none;
+       display: flex;
+       align-items: center;
+       gap: 0.5rem;
+   }
+
+   .btn-primary {
+       background: #007bff;
+       color: white;
+   }
+
+   .btn-secondary {
+       background: #4a5568; /* Darker gray */
+       color: #e2e8f0;
+   }
+
+   .btn:hover {
+       transform: translateY(-2px);
+       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+   }
+
+   .main-content {
+       background: #2d3748; /* Darker container */
+       border-radius: 15px;
+       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+       padding: 1.5rem;
+   }
+
+   .contacts-table {
+       width: 100%;
+       border-collapse: collapse;
+   }
+
+   .contacts-table th {
+       background: #4a5568; /* Dark header */
+       padding: 1rem;
+       text-align: left;
+       color: #e2e8f0;
+       font-weight: 600;
+       border-bottom: 2px solid #718096;
+   }
+
+   .contacts-table td {
+       padding: 1rem;
+       border-bottom: 1px solid #718096;
+       color: #e2e8f0;
+   }
+
+   .contacts-table tr:hover {
+       background: #2c3e50; /* Hover effect */
+   }
+
+   .action-buttons {
+       display: flex;
+       gap: 0.5rem;
+   }
+
+   .btn-edit {
+       background: #28a745;
+       color: white;
+   }
+
+   .btn-delete {
+       background: #dc3545;
+       color: white;
+   }
+
+   /* Modal Styling */
+   .modal {
+    display: none;  /* Ensure it stays visible */
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+}
+
+   .modal-content {
+        width: 400px; /* Adjust width as needed */
+        background: #4a5568; /* Dark modal */
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    }
+
+   .modal-header {
+       display: flex;
+       justify-content: space-between;
+       align-items: center;
+       margin-bottom: 1rem;
+   }
+
+   .modal-header h2 {
+       margin: 0;
+       color: #e2e8f0;
+   }
+
+   .close-btn {
+       background: none;
+       border: none;
+       font-size: 1.5rem;
+       cursor: pointer;
+       color: #e2e8f0;
+   }
+
+   /* Form Styling */
+   .form-group {
+       margin-bottom: 1rem;
+   }
+
+   .form-label {
+       display: block;
+       font-weight: 500;
+       margin-bottom: 0.5rem;
+       color: #e2e8f0;
+   }
+
+   .form-input {
+       width: 100%;
+       padding: 0.75rem;
+       border: 1px solid #718096;
+       border-radius: 8px;
+       background: #2d3748;
+       color: #e2e8f0;
+   }
+
+   /* Modal Footer */
+   .modal-footer {
+       display: flex;
+       justify-content: flex-end;
+       gap: 1rem;
+   }
+
+   /* Dark mode for Bootstrap modal */
+   .modal-content {
+       background-color: #2d3748;
+       color: #e2e8f0;
+       border: 1px solid #333;
+       border-radius: 8px;
+   }
+
+   .modal-header {
+       border-bottom: 1px solid #444;
+   }
+
+   .btn-close {
+       filter: invert(1);
+   }
+
+   /* Form Inputs */
+   .form-control {
+       background-color: #2a2a2a;
+       color: #ffffff;
+       border: 1px solid #444;
+   }
+   .form-control:focus {
+       background-color: #333;
+       color: #ffffff;
+       border-color: #007bff;
+       box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+   }
+
+   /* Labels */
+   .form-label {
+       font-weight: bold;
+       color: #bbbbbb;
+   }
+
+   /* Add & Remove Buttons */
+   .btn i {
+       margin-right: 5px;
+   }
+
+   /* Contact List Items */
+   .contact-list {
+       margin-top: 10px;
+   }
+   .contact-item {
+       display: flex;
+       align-items: center;
+       gap: 10px;
+       margin-bottom: 8px;
+   }
+   .contact-item input {
+       flex: 1;
+   }
+
+   /* Remove Button */
+   .remove-btn {
+       background: none;
+       border: none;
+       color: #ff4d4d;
+       cursor: pointer;
+       font-size: 1.2em;
+   }
+   .remove-btn:hover {
+       color: #ff1a1a;
+   }
+
+   /* Responsive Adjustments */
+   @media (max-width: 768px) {
+       .modal-dialog {
+           max-width: 90%;
+       }
+   }
+
+
+    </style>
 </head>
+
 <body>
-<h1>Google Contacts</h1>
-<table border="1">
-    <tr>
-        <th>Display Name</th>
-        <th>Email</th>
-        <th>Phone Number</th>
-    </tr>
-    <tr th:each="contact : ${contacts}">
-        <td th:text="${contact.displayName}"></td>
-        <td th:text="${contact.email}"></td>
-        <td th:text="${contact.phoneNumber}"></td>
-    </tr>
-</table>
+<div class="container">
+    <div class="header">
+        <h1>Contact Management</h1>
+        <div class="nav-buttons">
+            <a href="/index" class="btn btn-secondary">
+                <i class="fas fa-home"></i>
+                Home
+            </a>
+            <button onclick="showAddForm()" class="btn btn-primary">
+                <i class="fas fa-plus"></i>
+                Add Contact
+            </button>
+        </div>
+    </div>
+
+    <!-- Add Contact Modal -->
+    <!-- Add Contact Modal -->
+    <div id="addContactModal" class="modal fade" tabindex="-1" aria-labelledby="addContactModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addContactModalLabel">Add New Contact</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addContactForm" autocomplete="on">
+                        <div class="mb-3">
+                            <label class="form-label">First Name</label>
+                            <input type="text" id="firstName" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Last Name</label>
+                            <input type="text" id="lastName" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Birthday</label>
+                            <input type="date" id="birthday" class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email Addresses</label>
+                            <div id="addEmailList" class="contact-list"></div>
+                            <button type="button" onclick="addEmailField('addEmailList')" class="btn btn-secondary">
+                                <i class="fas fa-plus"></i> Add Email
+                            </button>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Phone Numbers</label>
+                            <div id="addPhoneList" class="contact-list"></div>
+                            <button type="button" onclick="addPhoneField('addPhoneList')" class="btn btn-secondary">
+                                <i class="fas fa-plus"></i> Add Phone
+                            </button>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Add Contact</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Update Contact Modal -->
+    <div id="updateContactModal" class="modal fade" tabindex="-1" aria-labelledby="addContactModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="updateContactModalLabel">Update Contact</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="updateContactForm" autocomplete="on">
+                        <input type="hidden" id="resourceName">
+                        <div class="mb-3">
+                            <label class="form-label">First Name</label>
+                            <input type="text" id="updateFirstName" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Last Name</label>
+                            <input type="text" id="updateLastName" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Birthday</label>
+                            <input type="date" id="updateBirthday" class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email Addresses</label>
+                            <div id="updateEmailList" class="contact-list"></div>
+                            <button type="button" onclick="addEmailField('updateEmailList')" class="btn btn-secondary">
+                                <i class="fas fa-plus"></i> Add Email
+                            </button>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Phone Numbers</label>
+                            <div id="updatePhoneList" class="contact-list"></div>
+                            <button type="button" onclick="addPhoneField('updatePhoneList')" class="btn btn-secondary">
+                                <i class="fas fa-plus"></i> Add Phone
+                            </button>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Update Contact</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="main-content">
+        <table class="contacts-table" id="contacts-table">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Birthday</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td colspan="5" class="loading">
+                    <i class="fas fa-spinner"></i> Loading contacts...
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    function showAddForm() {
+    $('#addContactModal').modal('show');
+    clearAddForm();
+    addEmailField('addEmailList');
+    addPhoneField('addPhoneList');
+}
+
+function hideAddForm() {
+    $('#addContactModal').modal('hide');
+}
+
+function showUpdateForm(resourceName, name, emailAddresses, phoneNumbers, birthdays) {
+    try {
+        $('#updateContactModal').modal('show');
+
+        document.getElementById('resourceName').value = resourceName;
+
+        // Split name into first and last name
+        const nameParts = name.split(" ");
+        document.getElementById('updateFirstName').value = nameParts[0] || "";
+        document.getElementById('updateLastName').value = nameParts.slice(1).join(" ") || "";
+
+        // Set birthday if available
+        if (birthdays && birthdays.length > 0 && birthdays[0].date) {
+            const date = birthdays[0].date;
+            document.getElementById('updateBirthday').value = `${date.year}-${String(date.month).padStart(2, '0')}-${String(date.day).padStart(2, '0')}`;
+        } else {
+            document.getElementById('updateBirthday').value = '';
+        }
+
+        // Populate email fields
+        const emailList = document.getElementById('updateEmailList');
+        emailList.innerHTML = '';
+        if (emailAddresses && emailAddresses.length > 0) {
+            emailAddresses.forEach(email => {
+                emailList.innerHTML += `
+                    <div class="contact-item">
+                        <input type="email" class="form-control" value="${email.value}" required>
+                        <button type="button" class="btn btn-danger btn-sm" onclick="this.parentElement.remove()">×</button>
+                    </div>`;
+            });
+        } else {
+            addEmailField('updateEmailList');
+        }
+
+        // Populate phone fields
+        const phoneList = document.getElementById('updatePhoneList');
+        phoneList.innerHTML = '';
+        if (phoneNumbers && phoneNumbers.length > 0) {
+            phoneNumbers.forEach(phone => {
+                phoneList.innerHTML += `
+                    <div class="contact-item">
+                        <input type="tel" class="form-control" value="${phone.value}" required>
+                        <button type="button" class="btn btn-danger btn-sm" onclick="this.parentElement.remove()">×</button>
+                    </div>`;
+            });
+        } else {
+            addPhoneField('updatePhoneList');
+        }
+    } catch (error) {
+        console.error("Error in showUpdateForm:", error);
+        alert("There was an error displaying the update form. Please try again.");
+    }
+}
+
+function hideUpdateForm() {
+    $('#updateContactModal').modal('hide');
+}
+
+    function addEmailField(containerId) {
+        const container = document.getElementById(containerId);
+        const div = document.createElement('div');
+        div.className = 'contact-item';
+        div.innerHTML = `
+            <input type="email" class="form-input" placeholder="Email Address" required>
+            <button type="button" class="remove-btn" onclick="this.parentElement.remove()">
+                <i class="fas fa-times"></i>
+            </button>
+        `;
+        container.appendChild(div);
+    }
+
+    function addPhoneField(containerId) {
+        const container = document.getElementById(containerId);
+        const div = document.createElement('div');
+        div.className = 'contact-item';
+        div.innerHTML = `
+            <input type="tel" class="form-input" placeholder="Phone Number" required>
+            <button type="button" class="remove-btn" onclick="this.parentElement.remove()">
+                <i class="fas fa-times"></i>
+            </button>
+        `;
+        container.appendChild(div);
+    }
+
+    function getContactValues(containerId) {
+        const container = document.getElementById(containerId);
+        const inputs = container.getElementsByTagName('input');
+        return Array.from(inputs).map(input => input.value).filter(value => value.trim() !== '');
+    }
+
+    function clearAddForm() {
+        document.getElementById('firstName').value = '';
+        document.getElementById('lastName').value = '';
+        document.getElementById('birthday').value = '';
+        document.getElementById('addEmailList').innerHTML = '';
+        document.getElementById('addPhoneList').innerHTML = '';
+    }
+
+    function showEmptyState() {
+        const tbody = document.querySelector('#contacts-table tbody');
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="5" class="empty-state">
+                    <i class="fas fa-address-book"></i>
+                    <p>No contacts found</p>
+                    <button onclick="showAddForm()" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Add Your First Contact
+                    </button>
+                </td>
+            </tr>
+        `;
+    }
+
+    function showLoadingState() {
+        const tbody = document.querySelector('#contacts-table tbody');
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="5" class="loading">
+                    <i class="fas fa-spinner"></i> Loading contacts...
+                </td>
+            </tr>
+        `;
+    }
+
+    function fetchContacts() {
+        showLoadingState();
+        $.get("/contacts", function (data) {
+            const tbody = document.querySelector('#contacts-table tbody');
+            tbody.innerHTML = '';
+
+            try {
+                if (typeof data === "string") {
+                    data = JSON.parse(data);
+                }
+
+                if (!data.connections || data.connections.length === 0) {
+                    showEmptyState();
+                    return;
+                }
+
+                data.connections.forEach(contact => {
+                    const name = contact.names ? contact.names[0].displayName : "No Name";
+
+                    // Format emails with icons
+                    let emailsHtml = '<div class="contact-info-list">';
+                    if (contact.emailAddresses && contact.emailAddresses.length > 0) {
+                        emailsHtml += contact.emailAddresses.map(e =>
+                            `<div class="contact-info-item">
+                                <i class="fas fa-envelope"></i>
+                                ${e.value}
+                            </div>`
+                        ).join('');
+                    } else {
+                        emailsHtml += `<div class="contact-info-item">
+                            <i class="fas fa-envelope"></i>
+                            No Email
+                        </div>`;
+                    }
+                    emailsHtml += '</div>';
+
+                    // Format phone numbers with icons
+                    let phonesHtml = '<div class="contact-info-list">';
+                    if (contact.phoneNumbers && contact.phoneNumbers.length > 0) {
+                        phonesHtml += contact.phoneNumbers.map(p =>
+                            `<div class="contact-info-item">
+                                <i class="fas fa-phone"></i>
+                                ${p.value}
+                            </div>`
+                        ).join('');
+                    } else {
+                        phonesHtml += `<div class="contact-info-item">
+                            <i class="fas fa-phone"></i>
+                            No Phone
+                        </div>`;
+                    }
+                    phonesHtml += '</div>';
+
+                    let birthday = "No Birthday";
+                    if (contact.birthdays && contact.birthdays.length > 0 && contact.birthdays[0].date) {
+                        const date = contact.birthdays[0].date;
+                        birthday = `${date.year}-${String(date.month).padStart(2, '0')}-${String(date.day).padStart(2, '0')}`;
+                    }
+
+                    // Escape special characters in the name
+                    const escapedName = name.replace(/'/g, "\\'").replace(/"/g, '\\"');
+
+                    // Create safe JSON strings for the data
+                    const safeEmailAddresses = JSON.stringify(contact.emailAddresses || []).replace(/"/g, '&quot;');
+                    const safePhoneNumbers = JSON.stringify(contact.phoneNumbers || []).replace(/"/g, '&quot;');
+                    const safeBirthdays = JSON.stringify(contact.birthdays || []).replace(/"/g, '&quot;');
+                    const safeResourceName = contact.resourceName.replace(/'/g, "\\'").replace(/"/g, '\\"');
+
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${name}</td>
+                        <td>${emailsHtml}</td>
+                        <td>${phonesHtml}</td>
+                        <td>
+                            <div class="contact-info-item">
+                                <i class="fas fa-calendar"></i>
+                                ${birthday}
+                            </div>
+                        </td>
+                        <td class="action-buttons">
+                            <button onclick='handleUpdate("${safeResourceName}", "${escapedName}", ${safeEmailAddresses}, ${safePhoneNumbers}, ${safeBirthdays})' class="btn btn-edit">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button onclick="deleteContact('${safeResourceName}')" class="btn btn-delete">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            } catch (error) {
+                console.error("Error parsing contacts:", error);
+                alert("Failed to process contact data.");
+            }
+        }).fail(function (xhr) {
+            if (xhr.status === 403) {
+                alert("Access Denied: Insufficient Permissions. Please log in again.");
+                window.location.href = "/logout";
+            } else {
+                alert("Failed to fetch contacts.");
+            }
+        });
+    }
+
+    $("#addContactForm").submit(function (event) {
+        event.preventDefault();
+        const emails = getContactValues('addEmailList');
+        const phones = getContactValues('addPhoneList');
+
+        $.post("/contacts/add", {
+            firstName: $("#firstName").val(),
+            lastName: $("#lastName").val(),
+            birthday: $("#birthday").val(),
+            emails: emails,
+            phoneNumbers: phones
+        }).done(function () {
+            alert("Contact added successfully!");
+            hideAddForm();
+            fetchContacts();
+        }).fail(function () {
+            alert("Failed to add contact.");
+        });
+    });
+
+    $("#updateContactForm").submit(function (event) {
+        event.preventDefault();
+        const emails = getContactValues('updateEmailList');
+        const phones = getContactValues('updatePhoneList');
+
+        const updateData = {
+            resourceName: $("#resourceName").val(),
+            firstName: $("#updateFirstName").val(),
+            lastName: $("#updateLastName").val(),
+            birthday: $("#updateBirthday").val(),
+            emails: emails,
+            phoneNumbers: phones
+        };
+
+        $.ajax({
+            url: "/contacts/update",
+            type: "PATCH",
+            contentType: "application/json",
+            data: JSON.stringify(updateData),
+            success: function (response) {
+                if (response.includes("Error")) {
+                    alert(response);
+                } else {
+                    alert("Contact updated successfully!");
+                    hideUpdateForm();
+                    fetchContacts();
+                }
+            },
+            error: function (xhr) {
+                console.error("Update error:", xhr.responseText);
+                alert("Failed to update contact. Please try again.");
+            }
+        });
+    });
+
+    function deleteContact(resourceName) {
+        if (confirm("Are you sure you want to delete this contact?")) {
+            $.ajax({
+                url: "/contacts/delete",
+                type: "DELETE",
+                data: { resourceName: resourceName },
+                success: function () {
+                    alert("Contact deleted successfully!");
+                    fetchContacts();
+                },
+                error: function () {
+                    alert("Failed to delete contact.");
+                }
+            });
+        }
+    }
+
+    // Add this new function to handle the update click
+    function handleUpdate(resourceName, name, emailAddresses, phoneNumbers, birthdays) {
+        try {
+            console.log("Update clicked for:", { resourceName, name, emailAddresses, phoneNumbers, birthdays });
+            showUpdateForm(resourceName, name, emailAddresses, phoneNumbers, birthdays);
+        } catch (error) {
+            console.error("Error in handleUpdate:", error);
+            alert("There was an error preparing the update form. Please try again.");
+        }
+    }
+
+    $(document).ready(function () {
+        fetchContacts();
+    });
+</script>
 </body>
 </html>
