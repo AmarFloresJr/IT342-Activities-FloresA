@@ -188,14 +188,18 @@
 <header class="header">
     <div class="logo">Contact Manager</div>
     <div class="user-info">
-        <div class="user-name" th:if="${#authentication != null and #authentication.principal != null}"
-             th:text="${#authentication.principal.attributes != null ? #authentication.principal.attributes.name : 'User'}">
-            User
-        </div>
-        <div class="user-name" th:unless="${#authentication != null and #authentication.principal != null}">
+        <i class="fas fa-user"></i>
+        <div class="user-name">
+        <span th:text="${#authentication != null and #authentication.principal != null ?
+                        (#authentication.principal.attributes != null and #authentication.principal.attributes.name != null ?
+                        #authentication.principal.attributes.name : #authentication.principal.name) : 'Guest'}">
             Guest
+        </span>
         </div>
-        <a href="/logout" class="logout-btn">Logout</a>
+        <a th:if="${#authentication != null and #authentication.principal != null}"
+           href="/logout" class="logout-btn">
+            <i class="fas fa-sign-out-alt"></i>
+            Logout</a>
     </div>
 </header>
 
@@ -207,7 +211,9 @@
         <div class="contact-card">
             <h2>Smart Contact Management</h2>
             <p>Store, access, and manage all your contacts with ease.</p>
-            <a href="/contacts/contacts-ui" class="btn">Manage Contacts</a>
+            <a href="/contacts/contacts-ui" class="btn">
+                <i class="fas fa-address-book"></i>
+                Manage Contacts</a>
         </div>
 
         <div class="features">
@@ -223,13 +229,13 @@
                 <h3>📌 Easy Organization</h3>
                 <p>Tag, group, and sort contacts in ways that make sense to you.</p>
             </div>
+            <div class="feature">
+                <h3>🔔 Instant Notifications</h3>
+                <p>Get reminders for important contact updates and follow-ups.</p>
+            </div>
         </div>
 
     </main>
 </div>
-
-<footer class="footer">
-    <p>© 2025 Contact Manager System.</p>
-</footer>
 </body>
 </html>

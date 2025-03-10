@@ -81,7 +81,7 @@
    }
 
    .main-content {
-       background: #2d3748; /* Darker container */
+       background: #2d3748;
        border-radius: 15px;
        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
        padding: 1.5rem;
@@ -93,7 +93,7 @@
    }
 
    .contacts-table th {
-       background: #4a5568; /* Dark header */
+       background: #4a5568;
        padding: 1rem;
        text-align: left;
        color: #e2e8f0;
@@ -108,7 +108,7 @@
    }
 
    .contacts-table tr:hover {
-       background: #2c3e50; /* Hover effect */
+       background: #2c3e50;
    }
 
    .action-buttons {
@@ -145,6 +145,7 @@
         padding: 2rem;
         border-radius: 10px;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+        margin: auto;
     }
 
    .modal-header {
@@ -195,14 +196,6 @@
        gap: 1rem;
    }
 
-   /* Dark mode for Bootstrap modal */
-   .modal-content {
-       background-color: #2d3748;
-       color: #e2e8f0;
-       border: 1px solid #333;
-       border-radius: 8px;
-   }
-
    .modal-header {
        border-bottom: 1px solid #444;
    }
@@ -211,12 +204,15 @@
        filter: invert(1);
    }
 
-   /* Form Inputs */
    .form-control {
-       background-color: #2a2a2a;
-       color: #ffffff;
-       border: 1px solid #444;
-   }
+        background-color: #2a2a2a;
+        color: #ffffff;
+        border: 1px solid #444;
+        height: 42px; /* Optimal height */
+        padding: 10px;
+        font-size: 16px;
+        border-radius: 6px; /* Smooth edges */
+    }
    .form-control:focus {
        background-color: #333;
        color: #ffffff;
@@ -268,6 +264,13 @@
        }
    }
 
+   .modal-dialog {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+
 
     </style>
 </head>
@@ -279,16 +282,15 @@
         <div class="nav-buttons">
             <a href="/index" class="btn btn-secondary">
                 <i class="fas fa-home"></i>
-                Home
+                Return
             </a>
             <button onclick="showAddForm()" class="btn btn-primary">
                 <i class="fas fa-plus"></i>
-                Add Contact
+                Add
             </button>
         </div>
     </div>
 
-    <!-- Add Contact Modal -->
     <!-- Add Contact Modal -->
     <div id="addContactModal" class="modal fade" tabindex="-1" aria-labelledby="addContactModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
